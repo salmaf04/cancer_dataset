@@ -184,11 +184,56 @@ def chi_square_test(var1, var2):
     chi2, p, dof, expected = chi2_contingency(contingency_table)
     return chi2, p, contingency_table
 
-# Resultados de las pruebas
-chi2_genetic, p_genetic, table_genetic = chi_square_test(data['Genetic_Risk_Cat'], data[ColumnNames.Level])
+# Obesidad vs. Tos con Sangre
+chi2_obesity_cough, p_obesity_cough, table_obesity_cough = chi_square_test(
+    pd.cut(data[ColumnNames.Obesity], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto']),
+    data[ColumnNames.Coughing_of_Blood] > 5
+)
+
+# Riesgo Genético vs. Consumo de Alcohol
+chi2_genetic_alcohol, p_genetic_alcohol, table_genetic_alcohol = chi_square_test(
+    pd.cut(data[ColumnNames.Genetic_Risk], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto']),
+    pd.cut(data[ColumnNames.Alcohol_Use], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto'])
+)
+
+# Riesgos Laborales vs. Enfermedad Pulmonar Crónica
+chi2_occupational_lung, p_occupational_lung, table_occupational_lung = chi_square_test(
+    pd.cut(data[ColumnNames.Occupational_Hazards], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto']),
+    data[ColumnNames.Chronic_Lung_Disease] > 5
+)
+
+# Tabaquismo vs. Dolor en el Pecho
 chi2_smoking, p_smoking, table_smoking = chi_square_test(data['Smoking_Cat'], data['Chest_Pain_Bin'])
-chi2_alcohol, p_alcohol, table_alcohol = chi_square_test(data['Alcohol_Use_Cat'], data[ColumnNames.Level])
-chi2_obesity, p_obesity, table_obesity = chi_square_test(data['Obesity_Cat'], data['Shortness_Breath_Bin'])
+
+# Tos Seca vs. Frío Constante
+chi2_dry_cough_cold, p_dry_cough_cold, table_dry_cough_cold = chi_square_test(
+    data[ColumnNames.Dry_Cough] > 5,
+    data[ColumnNames.Frequent_Cold] > 5
+)
+
+# Dificultad para Respirar vs. Pérdida de Peso
+chi2_breath_weight, p_breath_weight, table_breath_weight = chi_square_test(
+    data[ColumnNames.Shortness_of_Breath] > 5,
+    data[ColumnNames.Weight_Loss] > 5
+)
+
+# Contaminación del Aire vs. Enfermedad Pulmonar Crónica
+chi2_air_lung, p_air_lung, table_air_lung = chi_square_test(
+    pd.cut(data[ColumnNames.Air_Pollution], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto']),
+    data[ColumnNames.Chronic_Lung_Disease] > 5
+)
+
+# Fumador Pasivo vs. Fumador Activo
+chi2_passive_active, p_passive_active, table_passive_active = chi_square_test(
+    pd.cut(data[ColumnNames.Passive_Smoker], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto']),
+    pd.cut(data[ColumnNames.Smoking], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto'])
+)
+
+# Dolor en el Pecho vs. Enfermedad Pulmonar Crónica
+chi2_chest_lung, p_chest_lung, table_chest_lung = chi_square_test(
+    data[ColumnNames.Chest_Pain] > 5,
+    data[ColumnNames.Chronic_Lung_Disease] > 5
+)
 
 # Función para crear tablas HTML
 def create_html_table(contingency_table, row_labels, col_labels):
