@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 from columns import ColumnNames as cols 
 from main import data
 import pandas as pd
-from scipy.stats import chi2_contingency
+from scipy.stats import chi2_contingency, f_oneway, shapiro, levene
 from columns import ColumnNames
 
 def generar_tabla_resumen():
@@ -246,3 +246,77 @@ def create_html_table(contingency_table, row_labels, col_labels):
     ], style={'border': '1px solid black', 'border-collapse': 'collapse', 'width': '50%', 'margin': '10px 0'},
        className='contingency-table')
 
+# ANOVA para Consumo de Alcohol
+alcohol_low = data[data[ColumnNames.Level] == 'Low'][ColumnNames.Alcohol_Use]
+alcohol_medium = data[data[ColumnNames.Level] == 'Medium'][ColumnNames.Alcohol_Use]
+alcohol_high = data[data[ColumnNames.Level] == 'High'][ColumnNames.Alcohol_Use]
+anova_alcohol = f_oneway(alcohol_low, alcohol_medium, alcohol_high)
+
+# Verificar normalidad para Consumo de Alcohol
+shapiro_alcohol_low = shapiro(alcohol_low)
+shapiro_alcohol_medium = shapiro(alcohol_medium)
+shapiro_alcohol_high = shapiro(alcohol_high)
+
+# Verificar homogeneidad de varianzas para Consumo de Alcohol
+levene_alcohol = levene(alcohol_low, alcohol_medium, alcohol_high)
+
+# ANOVA para Riesgo Genético
+genetic_low = data[data[ColumnNames.Level] == 'Low'][ColumnNames.Genetic_Risk]
+genetic_medium = data[data[ColumnNames.Level] == 'Medium'][ColumnNames.Genetic_Risk]
+genetic_high = data[data[ColumnNames.Level] == 'High'][ColumnNames.Genetic_Risk]
+anova_genetic = f_oneway(genetic_low, genetic_medium, genetic_high)
+
+# Verificar normalidad para Riesgo Genético
+shapiro_genetic_low = shapiro(genetic_low)
+shapiro_genetic_medium = shapiro(genetic_medium)
+shapiro_genetic_high = shapiro(genetic_high)
+
+# Verificar homogeneidad de varianzas para Riesgo Genético
+levene_genetic = levene(genetic_low, genetic_medium, genetic_high)
+
+# ANOVA para Obesidad
+obesity_low = data[data[ColumnNames.Level] == 'Low'][ColumnNames.Obesity]
+obesity_medium = data[data[ColumnNames.Level] == 'Medium'][ColumnNames.Obesity]
+obesity_high = data[data[ColumnNames.Level] == 'High'][ColumnNames.Obesity]
+anova_obesity = f_oneway(obesity_low, obesity_medium, obesity_high)
+
+# Verificar normalidad para Obesidad
+shapiro_obesity_low = shapiro(obesity_low)
+shapiro_obesity_medium = shapiro(obesity_medium)
+shapiro_obesity_high = shapiro(obesity_high)
+
+# Verificar homogeneidad de varianzas para Obesidad
+levene_obesity = levene(obesity_low, obesity_medium, obesity_high)
+
+# Gráficos de pastel
+# Paletas de colores personalizadas para cada gráfico
+colors_alcohol = [ "#66c2a4",   "#bcbddc", "#ffeda0",]  # Azul, naranja, verde
+colors_genetic = ["#d62728", "#9467bd", "#8c564b"]  # Rojo, morado, marrón
+colors_obesity = ["#e377c2", "#7f7f7f", "#bcbd22"]  # Rosa, gris, oliva
+
+# Gráfico de Consumo de Alcohol
+fig_alcohol = px.pie(
+    data,
+    names=ColumnNames.Level,
+    values=ColumnNames.Alcohol_Use,
+    title="Consumo de Alcohol por Nivel de Riesgo",
+    color_discrete_sequence=colors_alcohol,  # Colores específicos para Alcohol
+)
+
+# Gráfico de Riesgo Genético
+fig_genetic = px.pie(
+    data,
+    names=ColumnNames.Level,
+    values=ColumnNames.Genetic_Risk,
+    title="Riesgo Genético por Nivel de Riesgo",
+    color_discrete_sequence=colors_genetic,  # Colores específicos para Riesgo Genético
+)
+
+# Gráfico de Obesidad
+fig_obesity = px.pie(
+    data,
+    names=ColumnNames.Level,
+    values=ColumnNames.Obesity,
+    title="Obesidad por Nivel de Riesgo",
+    color_discrete_sequence=colors_obesity,  # Colores específicos para Obesidad
+)

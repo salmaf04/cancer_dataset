@@ -148,12 +148,13 @@ interpretacion_matriz_correlacion = html.Div([
     """),
     html.Ul([
         html.Li("""
-            **Tos Seca y Dificultad para Tragar:** Muestran una correlación positiva fuerte, lo que sugiere que estos síntomas 
-            podrían presentarse juntos en los pacientes, indicando una posible relación clínica.
+            **Obesidad y Tos con Sangre:**Se observan relaciones significativas entre la obesidad y la tos con sangre, 
+            pues su correlación es cercana a 1, lo cual indica que la tos con sangre puede ser un síntoma influenciado 
+            por la obesidad del paciente.  .
         """),
         html.Li("""
-            **Fatiga y Dificultad para Respirar:** También presentan una correlación positiva, lo que podría indicar que estos síntomas 
-            están relacionados y podrían ser indicadores de condiciones subyacentes similares.
+            **Pérdida de Peso y Dificultad para Respirar:** También presentan una correlación positiva, lo que podría 
+            indicar que estos síntomas están relacionados y podrían ser indicadores de condiciones subyacentes similares.
         """),
         html.Li("""
             **Tabaquismo y Dolor en el Pecho:** La correlación positiva entre estas variables sugiere que el tabaquismo podría estar 
@@ -164,9 +165,26 @@ interpretacion_matriz_correlacion = html.Div([
             o predisposición genética que merece un estudio más detallado.
         """),
         html.Li("""
-            **Edad y Obesidad:** La correlación observada sugiere que la obesidad podría aumentar con la edad, lo que es consistente 
-            con tendencias conocidas en salud pública.
-        """)
+            **Riesgos Laborales y Enfermedad Pulmonar Crónica:** La correlación observada sugiere que los riesgos 
+            laborales podrían estar relacionados con la enfermedad pulmonar crónica.
+        """),
+        html.Li("""
+            **Tos Seca y Frío Constante:** También presentan una correlación positiva, lo que podría 
+            indicar que estos síntomas están relacionados y podrían ser indicadores de condiciones subyacentes similares.
+        """),
+        html.Li("""
+            **Fumador Pasivo y Fumador Activo:** La correlación observada sugiere que el fumador pasivo podría estar relacionados
+            con el fumador activo, indicando como el entorno puedo influir en la decisión de fumar.
+            del aire podría estar relacionados con la enfermedad pulmonar crónica.
+        """),
+        html.Li("""
+            **Contaminación del aire y Enfermedad Pulmonar Crónica:** La correlación observada sugiere que la contaminación
+            del aire podría estar relacionados con la enfermedad pulmonar crónica.
+        """),
+        html.Li("""
+            **Dolor en el Pecho y Enfermedad Pulmunar Crónica:** También presentan una correlación positiva, lo que podría 
+            indicar que estos síntomas están relacionados y podrían ser indicadores de condiciones subyacentes similares.
+        """),
     ]),
     html.P("""
         Este análisis visual es fundamental para identificar patrones y relaciones que podrían ser relevantes para la investigación 

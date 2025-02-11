@@ -1,33 +1,18 @@
-from dash import html
+from dash import html, dcc
 from data import (
-    chi2_smoking, 
-    p_smoking, 
-    table_smoking, 
+    chi2_smoking, p_smoking, table_smoking, 
     create_html_table,
-    chi2_genetic_alcohol, 
-    p_genetic_alcohol, 
-    table_genetic_alcohol,
-    chi2_occupational_lung, 
-    p_occupational_lung, 
-    table_occupational_lung,
-    chi2_obesity_cough, 
-    p_obesity_cough, 
-    table_obesity_cough,
-    chi2_breath_weight, 
-    p_breath_weight, 
-    table_breath_weight,
-    chi2_dry_cough_cold, 
-    p_dry_cough_cold, 
-    table_dry_cough_cold,
-    chi2_chest_lung, 
-    p_chest_lung, 
-    table_chest_lung,
-    chi2_air_lung, 
-    p_air_lung, 
-    table_air_lung,
-    chi2_passive_active, 
-    p_passive_active, 
-    table_passive_active
+    chi2_genetic_alcohol, p_genetic_alcohol, table_genetic_alcohol,
+    chi2_occupational_lung, p_occupational_lung, table_occupational_lung,
+    chi2_obesity_cough, p_obesity_cough, table_obesity_cough,
+    chi2_breath_weight, p_breath_weight, table_breath_weight,
+    chi2_dry_cough_cold, p_dry_cough_cold, table_dry_cough_cold,
+    chi2_chest_lung, p_chest_lung, table_chest_lung,
+    chi2_air_lung, p_air_lung, table_air_lung,
+    chi2_passive_active, p_passive_active, table_passive_active,
+    anova_alcohol, shapiro_alcohol_low, shapiro_alcohol_medium, shapiro_alcohol_high, levene_alcohol, fig_alcohol,
+    anova_genetic, shapiro_genetic_low, shapiro_genetic_medium, shapiro_genetic_high, levene_genetic, fig_genetic,
+    anova_obesity, shapiro_obesity_low, shapiro_obesity_medium, shapiro_obesity_high, levene_obesity, fig_obesity
 )
 chi_layout = html.Div(children=[
     html.H1("Análisis Inferencial del Dataset de Cáncer"),
@@ -161,4 +146,58 @@ chi_layout = html.Div(children=[
         puede ser relevante para el diagnóstico y tratamiento de enfermedades.
     """),
     
+])
+
+anova_layout = html.Div(children=[
+    html.H2("Análisis de la relación entre los niveles de avance del cáncer y los síntomas"),
+    html.P("""
+           Teniendo en cuenta las observaciones hechas en el gráfico de barras sobre la media de los síntomas por cada
+           nivel de avance del cáncer, a continuación se realizarán pruebas para verificar si hay diferencia significativa
+           de la presencia de algunos síntomas entre los niveles de avance del cáncer.
+    """),
+    
+    html.H3("Consumo de Alcohol"),
+    html.Table([
+        html.Tr([html.Th("Prueba", style={'text-align': 'left'}), html.Th("F-Stat", style={'text-align': 'left'}), html.Th("p-valor", style={'text-align': 'left'})]),
+        html.Tr([html.Td("ANOVA"), html.Td(f"{anova_alcohol.statistic:.2f}"), html.Td(f"{anova_alcohol.pvalue:.4f}")]),
+        html.Tr([html.Td("Normalidad (Low)"), html.Td(""), html.Td(f"{shapiro_alcohol_low.pvalue:.4f}")]),
+        html.Tr([html.Td("Normalidad (Medium)"), html.Td(""), html.Td(f"{shapiro_alcohol_medium.pvalue:.4f}")]),
+        html.Tr([html.Td("Normalidad (High)"), html.Td(""), html.Td(f"{shapiro_alcohol_high.pvalue:.4f}")]),
+        html.Tr([html.Td("Homogeneidad de Varianzas"), html.Td(""), html.Td(f"{levene_alcohol.pvalue:.4f}")]),
+    ], style={'width': '50%', 'margin': '10px 0', 'border': '1px solid black', 'border-collapse': 'collapse'}),
+    html.P("""
+        La prueba ANOVA indica diferencias significativas en el consumo de alcohol entre los niveles de riesgo. 
+        Sin embargo, los supuestos de normalidad y homogeneidad de varianzas no se cumplen, lo que puede afectar la validez de los resultados.
+    """),
+    dcc.Graph(figure=fig_alcohol),
+    
+    html.H3("Riesgo Genético"),
+    html.Table([
+        html.Tr([html.Th("Prueba", style={'text-align': 'left'}), html.Th("F-Stat", style={'text-align': 'left'}), html.Th("p-valor", style={'text-align': 'left'})]),
+        html.Tr([html.Td("ANOVA"), html.Td(f"{anova_genetic.statistic:.2f}"), html.Td(f"{anova_genetic.pvalue:.4f}")]),
+        html.Tr([html.Td("Normalidad (Low)"), html.Td(""), html.Td(f"{shapiro_genetic_low.pvalue:.4f}")]),
+        html.Tr([html.Td("Normalidad (Medium)"), html.Td(""), html.Td(f"{shapiro_genetic_medium.pvalue:.4f}")]),
+        html.Tr([html.Td("Normalidad (High)"), html.Td(""), html.Td(f"{shapiro_genetic_high.pvalue:.4f}")]),
+        html.Tr([html.Td("Homogeneidad de Varianzas"), html.Td(""), html.Td(f"{levene_genetic.pvalue:.4f}")]),
+    ], style={'width': '50%', 'margin': '10px 0', 'border': '1px solid black', 'border-collapse': 'collapse'}),
+    html.P("""
+        La prueba ANOVA muestra diferencias significativas en el riesgo genético entre los niveles de riesgo. 
+        Sin embargo, los supuestos de normalidad y homogeneidad de varianzas no se cumplen, lo que puede afectar la validez de los resultados.
+    """),
+    dcc.Graph(figure=fig_genetic),
+    
+    html.H3("Obesidad"),
+    html.Table([
+        html.Tr([html.Th("Prueba", style={'text-align': 'left'}), html.Th("F-Stat", style={'text-align': 'left'}), html.Th("p-valor", style={'text-align': 'left'})]),
+        html.Tr([html.Td("ANOVA"), html.Td(f"{anova_obesity.statistic:.2f}"), html.Td(f"{anova_obesity.pvalue:.4f}")]),
+        html.Tr([html.Td("Normalidad (Low)"), html.Td(""), html.Td(f"{shapiro_obesity_low.pvalue:.4f}")]),
+        html.Tr([html.Td("Normalidad (Medium)"), html.Td(""), html.Td(f"{shapiro_obesity_medium.pvalue:.4f}")]),
+        html.Tr([html.Td("Normalidad (High)"), html.Td(""), html.Td(f"{shapiro_obesity_high.pvalue:.4f}")]),
+        html.Tr([html.Td("Homogeneidad de Varianzas"), html.Td(""), html.Td(f"{levene_obesity.pvalue:.4f}")]),
+    ], style={'width': '50%', 'margin': '10px 0', 'border': '1px solid black', 'border-collapse': 'collapse'}),
+    html.P("""
+        La prueba ANOVA indica diferencias significativas en la obesidad entre los niveles de riesgo. 
+        Sin embargo, los supuestos de normalidad y homogeneidad de varianzas no se cumplen, lo que puede afectar la validez de los resultados.
+    """),
+    dcc.Graph(figure=fig_obesity),
 ])
