@@ -6,6 +6,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 from columns import ColumnNames as cols 
 from main import data
+import pandas as pd
+from scipy.stats import chi2_contingency
+from columns import ColumnNames
 
 def generar_tabla_resumen():
     # Seleccionar solo las variables numéricas relevantes
@@ -166,3 +169,35 @@ def generar_barras_factores_por_nivel():
     return fig
 
 barras_factores_por_nivel = dcc.Graph(figure=generar_barras_factores_por_nivel())
+
+
+data['Smoking_Cat'] = pd.cut(data[ColumnNames.Smoking], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto'])
+data['Alcohol_Use_Cat'] = pd.cut(data[ColumnNames.Alcohol_Use], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto'])
+data['Obesity_Cat'] = pd.cut(data[ColumnNames.Obesity], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto'])
+data['Chest_Pain_Bin'] = data[ColumnNames.Chest_Pain] > 5
+data['Shortness_Breath_Bin'] = data[ColumnNames.Shortness_of_Breath] > 5
+data['Genetic_Risk_Cat'] = pd.cut(data[ColumnNames.Genetic_Risk], bins=[0, 3, 6, 10], labels=['Bajo', 'Medio', 'Alto'])
+
+# Pruebas de Chi-Cuadrado
+def chi_square_test(var1, var2):
+    contingency_table = pd.crosstab(var1, var2)
+    chi2, p, dof, expected = chi2_contingency(contingency_table)
+    return chi2, p, contingency_table
+
+# Resultados de las pruebas
+chi2_genetic, p_genetic, table_genetic = chi_square_test(data['Genetic_Risk_Cat'], data[ColumnNames.Level])
+chi2_smoking, p_smoking, table_smoking = chi_square_test(data['Smoking_Cat'], data['Chest_Pain_Bin'])
+chi2_alcohol, p_alcohol, table_alcohol = chi_square_test(data['Alcohol_Use_Cat'], data[ColumnNames.Level])
+chi2_obesity, p_obesity, table_obesity = chi_square_test(data['Obesity_Cat'], data['Shortness_Breath_Bin'])
+
+# Función para crear tablas HTML
+def create_html_table(contingency_table, row_labels, col_labels):
+    return html.Table([
+        html.Thead(html.Tr([html.Th('')] + [html.Th(col, style={'text-align': 'left'}) for col in col_labels])),
+        html.Tbody([
+            html.Tr([html.Td(row_labels[i])] + [html.Td(contingency_table.iloc[i, j]) for j in range(len(contingency_table.columns))])
+            for i in range(len(contingency_table))
+        ])
+    ], style={'border': '1px solid black', 'border-collapse': 'collapse', 'width': '50%', 'margin': '10px 0'},
+       className='contingency-table')
+
