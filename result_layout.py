@@ -13,7 +13,12 @@ from data import (
     anova_alcohol, shapiro_alcohol_low, shapiro_alcohol_medium, shapiro_alcohol_high, levene_alcohol, fig_alcohol,
     anova_genetic, shapiro_genetic_low, shapiro_genetic_medium, shapiro_genetic_high, levene_genetic, fig_genetic,
     anova_obesity, shapiro_obesity_low, shapiro_obesity_medium, shapiro_obesity_high, levene_obesity, fig_obesity,
-    summary, fig_regression, shapiro_test, data_residuals_vs_fitted, data_qq_plot
+    summary, fig_regression, shapiro_test, data_residuals_vs_fitted, data_qq_plot,
+    fig_gender_count, intervalo_confianza, fig_gender_proportion,
+    barras_factores_por_genero,
+    t_stat_alcohol, p_valor_alcohol, fig_alcohol_gender,
+    t_stat_tabaquismo, p_valor_tabaquismo, fig_tabaquismo_gender,
+    t_stat_dolor_pecho, p_valor_dolor_pecho, fig_dolor_pecho_gender
 )
 chi_layout = html.Div(children=[
     html.H2("Análisis de correlaciones"),
@@ -256,4 +261,52 @@ regression_layout = html.Div(children=[
         La falta de homoscedasticidad y normalidad en los residuos sugiere que el modelo de regresión lineal puede no ser adecuado. 
         Considerar transformaciones de variables o modelos alternativos podría mejorar el ajuste.
     """),
+])
+
+gender_layout = html.Div([
+    html.H2("Análisis de los pacientes de cáncer por género"),
+       html.H3("Cantidad de Pacientes por Genero"),
+    dcc.Graph(figure=fig_gender_count),
+    html.Pre(intervalo_confianza, style={'whiteSpace': 'pre-wrap', 'wordBreak': 'break-all', 'fontSize': '14px', 'padding': '10px', 'border': '1px solid #ccc', 'borderRadius': '5px', 'margin': '20px 0'}),
+    dcc.Graph(figure=fig_gender_proportion),
+    html.P("""
+           Con esta prueba se pudo confirmar que la muestra es proporcional con respecto a la cantidad de pacientes con cáncer
+           a la población, por lo que se pasará a estudiar cómo se comportan los síntomas en cada género y si el estilo de vida
+           es igual en ambos grupos.
+    """),
+    html.H3("Comparación de Factores por Género"),
+    barras_factores_por_genero,
+    html.P("""
+           En el gráfico de barras se puede observar que existen diferencias entre los géneros tanto en el estilo de vida
+           como en la presentación de los síntomas. La mayor diferencia se aprecia en el tabaquismo, consumo de alcohol y
+           dolor en el pecho, que en los tres casos la media en los hombres es superior a la media en las mujeres, por lo que se 
+           realizarán pruebas para verificar si esta diferencia es significativa. 
+    """),
+    html.H3("Resultados de las Pruebas T-Student"),
+    
+    html.Span(f"**Consumo de Alcohol:** t-statistic = {t_stat_alcohol:.2f}, p-valor = {p_valor_alcohol:.4f}"),
+    html.P("""
+        El p-valor extremadamente bajo indica que hay una diferencia significativa en el consumo de alcohol entre hombres
+        y mujeres. La estadística t alta sugiere que esta diferencia es considerable. Esto podría implicar que uno de los
+        géneros consume significativamente más alcohol que el otro.
+    """),
+    dcc.Graph(figure=fig_alcohol_gender),
+    
+    html.Span(f"**Tabaquismo:** t-statistic = {t_stat_tabaquismo:.2f}, p-valor = {p_valor_tabaquismo:.4f}"),
+    html.P("""
+        Similar al consumo de alcohol, el p-valor bajo indica una diferencia significativa en los hábitos de tabaquismo 
+        entre géneros. La estadística t alta refuerza la magnitud de esta diferencia, sugiriendo que uno de los géneros 
+        fuma más que el otro.
+    """),
+    dcc.Graph(figure=fig_tabaquismo_gender),
+    
+    html.Span(f"**Dolor en el Pecho:** t-statistic = {t_stat_dolor_pecho:.2f}, p-valor = {p_valor_dolor_pecho:.4f}"),
+    html.P("""
+        El p-valor bajo muestra que hay una diferencia significativa en la experiencia de dolor en el pecho entre 
+        hombres y mujeres. La estadística t alta indica que esta diferencia es notable, lo que podría tener implicaciones 
+        para el diagnóstico y tratamiento.
+    """),
+    dcc.Graph(figure=fig_dolor_pecho_gender),
+    
+    
 ])

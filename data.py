@@ -7,12 +7,13 @@ import plotly.graph_objects as go
 from columns import ColumnNames as cols 
 from main import data
 import pandas as pd
-from scipy.stats import chi2_contingency, f_oneway, shapiro, levene
+from scipy.stats import chi2_contingency, f_oneway, shapiro, levene, ttest_ind
 from columns import ColumnNames
 import io
 import statsmodels.api as sm
 import scipy.stats as stats
 import base64
+import numpy as np
 
 def generar_tabla_resumen():
     # Seleccionar solo las variables numéricas relevantes
@@ -374,3 +375,173 @@ data_qq_plot = base64.b64encode(buf.getbuffer()).decode("utf8")
 
 # Prueba de normalidad de Shapiro-Wilk
 shapiro_test = stats.shapiro(residuals)
+
+genre = data.groupby('Gender')['Gender'].value_counts().reset_index()
+
+
+fig_gender_count = px.bar(genre, 
+             x='Gender',
+             y='count',
+             color='Gender',
+             labels={'Gender': 'Genero', 'count': 'Cantidad'},
+             title='Cantidad de Pacientes por Genero')
+
+"""
+Intervalo de confianza para la proporción de hombres y mujeres
+"""
+
+# Obtener el número de hombres y mujeres en los datos
+total_hombres = genre[genre['Gender'] == 1]['count'].values[0]
+total_mujeres = genre[genre['Gender'] == 2]['count'].values[0]
+
+# Obtener el total de pacientes
+total_pacientes = total_hombres + total_mujeres
+
+# Asignar las proporciones observadas en tu dataset
+p_hombres_data = total_hombres / total_pacientes  # Proporción observada de hombres en el dataset
+p_mujeres_data = total_mujeres / total_pacientes  # Proporción observada de mujeres en el dataset
+
+# Proporciones esperadas para el intervalo de confianza
+p_hombres_esperado = 0.6  # Proporción esperada de hombres
+p_mujeres_esperado = 0.4  # Proporción esperada de mujeres
+
+# Tamaños de las muestras (hombres y mujeres)
+n_hombres = total_hombres
+n_mujeres = total_mujeres
+
+# Nivel de confianza
+confianza = 0.90
+
+# Z-score para un intervalo de confianza del 90%
+z_score = stats.norm.ppf(1 - (1 - confianza) / 2)
+
+# Calcular el error estándar para la diferencia de proporciones usando las proporciones esperadas
+se = np.sqrt(p_hombres_esperado * (1 - p_hombres_esperado) / n_hombres + p_mujeres_esperado * (1 - p_mujeres_esperado) / n_mujeres)
+
+# Calcular la diferencia de proporciones
+diferencia_esperada = p_hombres_esperado - p_mujeres_esperado
+
+# Calcular el intervalo de confianza
+margen_error = z_score * se
+ic_inferior = diferencia_esperada - margen_error
+ic_superior = diferencia_esperada + margen_error
+
+# Verificar si la diferencia de proporciones del dataset cae dentro del intervalo de confianza
+diferencia_data = p_hombres_data - p_mujeres_data
+
+# Resultado
+intervalo_confianza = f"""
+    Interpretación del Intervalo de Confianza para la Diferencia de Proporciones entre Hombres y Mujeres que son Pacientes de Cáncer:
+
+    - **Proporción observada de hombres**: {p_hombres_data:.4f}
+    - **Proporción observada de mujeres**: {p_mujeres_data:.4f}
+    - **Diferencia de proporciones observada**: {diferencia_data:.4f}
+    
+    - **Proporción esperada de hombres**: {p_hombres_esperado:.4f}
+    - **Proporción esperada de mujeres**: {p_mujeres_esperado:.4f}
+    - **Diferencia de proporciones esperada**: {diferencia_esperada:.4f}
+    - **Intervalo de Confianza para la Diferencia de Proporciones (90%)**: ({ic_inferior:.4f}, {ic_superior:.4f})
+    
+    - **Conclusión**:
+      {"La diferencia observada en las proporciones entre hombres y mujeres está dentro del intervalo de confianza, lo cual significa que las proporciones observadas en la muestra son proporcionales a la población. "
+       if ic_inferior <= diferencia_data <= ic_superior
+       else
+       "Se rechaza la hipótesis nula. La diferencia de proporciones observada es estadísticamente significativa."}
+    """
+    
+# Calcular la proporción de pacientes masculinos y femeninos
+total_patients = len(data)
+male_count = data[data['Gender'] == 1].shape[0]
+female_count = total_patients - male_count
+
+# Crear un DataFrame con las proporciones
+gender_proportions = pd.DataFrame({
+    'Gender': ['Hombres', 'Mujeres'],
+    'Count': [male_count, female_count]
+})
+
+# Crear el gráfico de pastel
+fig_gender_proportion = px.pie(gender_proportions, 
+                               names='Gender', 
+                               values='Count', 
+                               title='Proporción de Pacientes por Género',
+                               color_discrete_sequence=['lightblue', 'pink'])
+
+# Seleccionar solo las variables numéricas relevantes
+variables_numericas = [
+    cols.Air_Pollution, cols.Alcohol_Use, cols.Occupational_Hazards,
+    cols.Genetic_Risk, cols.Chronic_Lung_Disease, cols.Balanced_Diet, cols.Obesity,
+    cols.Smoking, cols.Passive_Smoker, cols.Chest_Pain, cols.Coughing_of_Blood,
+    cols.Fatigue, cols.Weight_Loss, cols.Shortness_of_Breath, cols.Wheezing,
+    cols.Swallowing_Difficulty, cols.Frequent_Cold, cols.Dry_Cough
+]
+
+# Calcular la media de cada variable por género
+medias_por_genero = data.groupby('Gender')[variables_numericas].mean().reset_index()
+
+# Renombrar columnas para el gráfico
+nombres_legibles_genero = {
+    cols.Gender : 'Género',
+    cols.Alcohol_Use: "Consumo de Alcohol",
+    cols.Occupational_Hazards: "Riesgos Laborales",
+    cols.Genetic_Risk: "Riesgo Genético",
+    cols.Chronic_Lung_Disease: "Enfermedad Pulmonar Crónica",
+    cols.Balanced_Diet: "Dieta Equilibrada",
+    cols.Obesity: "Obesidad",
+    cols.Smoking: "Tabaquismo",
+    cols.Passive_Smoker: "Fumador Pasivo",
+    cols.Chest_Pain: "Dolor en el Pecho",
+    cols.Coughing_of_Blood: "Tos con Sangre",
+    cols.Fatigue: "Fatiga",
+    cols.Weight_Loss: "Pérdida de Peso",
+    cols.Shortness_of_Breath: "Dificultad para Respirar",
+    cols.Wheezing: "Sibilancias",
+    cols.Swallowing_Difficulty: "Dificultad para Tragar",
+    cols.Frequent_Cold: "Resfriados Frecuentes",
+    cols.Dry_Cough: "Tos Seca"
+}
+medias_por_genero_renombrada = medias_por_genero.rename(columns=nombres_legibles_genero)
+
+# Crear el gráfico de barras
+def generar_barras_factores_por_genero():
+    fig = px.bar(medias_por_genero_renombrada, x='Género', y=medias_por_genero_renombrada.columns[1:], barmode='group',
+                 title='Comparación de Factores por Género')
+    fig.update_layout(xaxis_title='Género', yaxis_title='Media de Factores')
+    return fig
+
+barras_factores_por_genero = dcc.Graph(figure=generar_barras_factores_por_genero())
+
+data_clean = data.dropna(subset=[cols.Alcohol_Use, cols.Smoking, cols.Chest_Pain])
+# Prueba T-Student para el Consumo de Alcohol
+alcohol_masculino = data_clean[data_clean['Gender'] == 1][cols.Alcohol_Use]
+alcohol_femenino = data_clean[data_clean['Gender'] == 2][cols.Alcohol_Use]
+t_stat_alcohol, p_valor_alcohol = ttest_ind(alcohol_masculino, alcohol_femenino, equal_var=False)
+
+# Prueba T-Student para Tabaquismo
+tabaquismo_masculino = data_clean[data_clean['Gender'] == 1][cols.Smoking]
+tabaquismo_femenino = data_clean[data_clean['Gender'] == 2][cols.Smoking]
+t_stat_tabaquismo, p_valor_tabaquismo = ttest_ind(tabaquismo_masculino, tabaquismo_femenino, equal_var=False)
+
+# Prueba T-Student para Dolor en el Pecho
+dolor_pecho_masculino = data_clean[data_clean['Gender'] == 1][cols.Chest_Pain]
+dolor_pecho_femenino = data_clean[data_clean['Gender'] == 2][cols.Chest_Pain]
+t_stat_dolor_pecho, p_valor_dolor_pecho = ttest_ind(dolor_pecho_masculino, dolor_pecho_femenino, equal_var=False)
+
+# Calcular proporciones para cada variable
+def calcular_proporciones(variable):
+    return data.groupby('Gender')[variable].mean().reset_index()
+
+## Crear gráficos de pastel con colores personalizados
+colors = ['#a6cee3', '#fbb4ae']  # Colores personalizados
+
+fig_alcohol_gender = px.pie(calcular_proporciones(cols.Alcohol_Use), names='Gender', values=cols.Alcohol_Use,
+                     title='Consumo de Alcohol por Género', labels={'Gender': 'Género'},
+                     color_discrete_sequence=colors)
+
+fig_tabaquismo_gender = px.pie(calcular_proporciones(cols.Smoking), names='Gender', values=cols.Smoking,
+                        title='Tabaquismo por Género', labels={'Gender': 'Género'},
+                        color_discrete_sequence=colors)
+
+fig_dolor_pecho_gender = px.pie(calcular_proporciones(cols.Chest_Pain), names='Gender', values=cols.Chest_Pain,
+                         title='Dolor en el Pecho por Género', labels={'Gender': 'Género'},
+                         color_discrete_sequence=colors)

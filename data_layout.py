@@ -20,6 +20,9 @@ data_layout = html.Div([
     html.P("""
         Este dataset contiene información sobre pacientes con cáncer, enfocándose en diversos factores que podrían estar relacionados con la enfermedad. 
         Los datos incluyen variables demográficas, factores de riesgo ambientales y genéticos, hábitos de vida, síntomas clínicos y el nivel de riesgo de cáncer.
+        El estudio del cáncer es fundamental para comprender hábitos de vida que pueden influir, factores de riesgo y
+        principales síntomas. A través del análisis de datos estadísticos, podemos identificar patrones y correlaciones
+        en los síntomas, así como identificar factores que afectan el nivel de avance de esta enfermedad.
     """),
     html.H3("Campos del Dataset"),
     html.Ul([
@@ -51,8 +54,8 @@ data_layout = html.Div([
     ]),
     html.H3("Objetivo del Análisis"),
     html.P("""
-        El objetivo principal es identificar patrones y relaciones entre los factores de riesgo y el nivel de cáncer. 
-        Buscamos determinar qué variables tienen un impacto significativo en el nivel de riesgo de cáncer y proporcionar insights para la prevención y el diagnóstico temprano.
+        El objetivo principal es identificar patrones y relaciones entre los factores de riesgo y el nivel de cáncer, con el fin de 
+        determinar qué variables tienen un impacto significativo en el nivel de riesgo de cáncer y proporcionar insights para la prevención y el diagnóstico temprano.
     """),
 ])
 
@@ -74,14 +77,24 @@ describe_layout = html.Div([
     
     html.H2("Distribución de Factores de Riesgo"),
     html.P("""
-        Los gráficos de caja muestran la distribución de los factores de riesgo agrupados en categorías. Esto nos ayuda a identificar patrones y valores atípicos.
+        Los gráficos de caja muestran la distribución de los factores de riesgo agrupados en categorías. 
+        Esto nos ayuda a identificar patrones, valores atípicos, y relaciones que pueden influir en la salud y 
+        el bienestar. Al interpretar estos gráficos, podemos obtener información valiosa sobre la centralidad y 
+        variabilidad de cada factor, lo que facilita la identificación de áreas críticas que requieren atención o 
+        intervención.
     """),
     *boxplots_factores,
     interpretacion_graficos_caja,
     
     html.H2("Matriz de Correlación"),
     html.P("""
-        La matriz de correlación muestra las relaciones lineales entre las variables numéricas. Esto nos ayuda a identificar variables que podrían estar relacionadas.
+        La matriz de correlación es una herramienta estadística crucial para analizar la relación entre múltiples 
+        variables en un conjunto de datos, especialmente en contextos complejos como el estudio de síntomas y estilos de 
+        vida en personas con cáncer. En este caso, la matriz de correlación permite identificar cómo factores de estilo
+        de vida, como el tabaquismo, el consumo de alcohol, la exposición a la contaminación del aire, y otros factores 
+        ambientales y clínicos, se relacionan entre sí y con la presencia de síntomas específicos. Al visualizar estas 
+        correlaciones, podemos detectar patrones y asociaciones significativas que podrían indicar interdependencias o 
+        influencias mutuas entre los factores de riesgo y los síntomas del cáncer.
     """),
     heatmap_correlacion,
     interpretacion_matriz_correlacion,
