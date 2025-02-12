@@ -9,6 +9,10 @@ from main import data
 import pandas as pd
 from scipy.stats import chi2_contingency, f_oneway, shapiro, levene
 from columns import ColumnNames
+import io
+import statsmodels.api as sm
+import scipy.stats as stats
+import base64
 
 def generar_tabla_resumen():
     # Seleccionar solo las variables numéricas relevantes
@@ -290,9 +294,9 @@ levene_obesity = levene(obesity_low, obesity_medium, obesity_high)
 
 # Gráficos de pastel
 # Paletas de colores personalizadas para cada gráfico
-colors_alcohol = [ "#66c2a4",   "#bcbddc", "#ffeda0",]  # Azul, naranja, verde
-colors_genetic = ["#d62728", "#9467bd", "#8c564b"]  # Rojo, morado, marrón
-colors_obesity = ["#e377c2", "#7f7f7f", "#bcbd22"]  # Rosa, gris, oliva
+colors_alcohol = [ "#ccebc5",  "#fed9a6", "#fff2ae" ]  # Azul, naranja, verde
+colors_genetic = ["#ccebc5",  "#fed9a6", "#fff2ae"]  # Rojo, morado, marrón
+colors_obesity = ["#ccebc5",  "#fed9a6", "#fff2ae"]  # Rosa, gris, oliva
 
 # Gráfico de Consumo de Alcohol
 fig_alcohol = px.pie(
@@ -320,3 +324,53 @@ fig_obesity = px.pie(
     title="Obesidad por Nivel de Riesgo",
     color_discrete_sequence=colors_obesity,  # Colores específicos para Obesidad
 )
+
+#Regresión lineal 
+
+# Codificar el nivel de riesgo
+risk_mapping = {'Low': 1, 'Medium': 2, 'High': 3}
+data['Risk_Level_Encoded'] = data[ColumnNames.Level].map(risk_mapping)
+
+# Variable independiente y dependiente
+X = data[[ColumnNames.Age]]
+y = data['Risk_Level_Encoded']
+
+# Agregar constante para el modelo
+X = sm.add_constant(X)
+
+# Ajustar el modelo de regresión lineal
+model = sm.OLS(y, X).fit()
+
+# Resultados del modelo
+summary = model.summary()
+
+# Crear gráfico de dispersión con línea de regresión
+fig_regression = px.scatter(data, x=ColumnNames.Age, y='Risk_Level_Encoded', trendline="ols",
+                            labels={'Risk_Level_Encoded': 'Nivel de Riesgo Codificado', ColumnNames.Age: 'Edad'},
+                            title="Regresión Lineal: Edad vs. Nivel de Riesgo")
+
+# Gráfico de residuos vs. valores ajustados
+residuals = model.resid
+
+fig, ax = plt.subplots()
+ax.scatter(model.fittedvalues, residuals)
+ax.axhline(0, color='red', linestyle='--')
+ax.set_xlabel('Valores Ajustados')
+ax.set_ylabel('Residuos')
+ax.set_title('Residuos vs. Valores Ajustados')
+buf = io.BytesIO()
+plt.savefig(buf, format='png')
+plt.close(fig)
+data_residuals_vs_fitted = base64.b64encode(buf.getbuffer()).decode("utf8")
+
+# Gráfico Q-Q para normalidad de residuos
+fig, ax = plt.subplots()
+stats.probplot(residuals, dist="norm", plot=ax)
+ax.set_title('Gráfico Q-Q de Residuos')
+buf = io.BytesIO()
+plt.savefig(buf, format='png')
+plt.close(fig)
+data_qq_plot = base64.b64encode(buf.getbuffer()).decode("utf8")
+
+# Prueba de normalidad de Shapiro-Wilk
+shapiro_test = stats.shapiro(residuals)

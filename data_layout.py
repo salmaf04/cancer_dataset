@@ -57,7 +57,6 @@ data_layout = html.Div([
 ])
 
 describe_layout = html.Div([
-    html.H1("Análisis Descriptivo del Dataset de Cáncer"),
     html.H2("Resumen Estadístico"),
     html.P("""
         El resumen estadístico proporciona una visión general de las variables numéricas, incluyendo la media, mediana, desviación estándar y moda.

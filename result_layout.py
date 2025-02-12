@@ -12,11 +12,11 @@ from data import (
     chi2_passive_active, p_passive_active, table_passive_active,
     anova_alcohol, shapiro_alcohol_low, shapiro_alcohol_medium, shapiro_alcohol_high, levene_alcohol, fig_alcohol,
     anova_genetic, shapiro_genetic_low, shapiro_genetic_medium, shapiro_genetic_high, levene_genetic, fig_genetic,
-    anova_obesity, shapiro_obesity_low, shapiro_obesity_medium, shapiro_obesity_high, levene_obesity, fig_obesity
+    anova_obesity, shapiro_obesity_low, shapiro_obesity_medium, shapiro_obesity_high, levene_obesity, fig_obesity,
+    summary, fig_regression, shapiro_test, data_residuals_vs_fitted, data_qq_plot
 )
 chi_layout = html.Div(children=[
-    html.H1("Análisis Inferencial del Dataset de Cáncer"),
-    
+    html.H2("Análisis de correlaciones"),
     html.P("""
         Tras los resultados obtenidos tras obervar la matriz de correlación se quiere comprobar si existe una asociación entre
         algunos síntomas, estilos de vida y factores de riesgo. 
@@ -200,4 +200,60 @@ anova_layout = html.Div(children=[
         Sin embargo, los supuestos de normalidad y homogeneidad de varianzas no se cumplen, lo que puede afectar la validez de los resultados.
     """),
     dcc.Graph(figure=fig_obesity),
+])
+
+regression_layout = html.Div(children=[
+    html.H2("Regresión Lineal: Edad vs. Nivel de Riesgo"),
+    html.P("""
+        Este análisis se realiza para explorar la relación entre la edad de los pacientes y su nivel de riesgo de cáncer. 
+        Comprender esta relación es crucial para identificar patrones demográficos que puedan influir en el riesgo de cáncer. 
+        La regresión lineal se utiliza para modelar esta relación, donde la edad es la variable independiente 
+        y el nivel de riesgo es la variable dependiente. Este enfoque nos permite evaluar si la edad es un predictor significativo 
+        del nivel de riesgo y, por lo tanto, puede informar estrategias de prevención y diagnóstico temprano.
+    """),
+    html.Pre(summary.as_text(), style={'white-space': 'pre-wrap', 'font-family': 'monospace'}),
+    dcc.Graph(figure=fig_regression),
+    
+    html.H3("Interpretación de Resultados"),
+    html.Ul([
+        html.Li("""
+        **R-squared (R²):** Solo el 0.4% de la variabilidad en el nivel de riesgo se explica por la edad, 
+          indicando que la edad no es un buen predictor del nivel de riesgo en este modelo.
+        """),
+        html.Li("""
+        **F-statistic:** El p-valor de 0.0577 sugiere que la relación entre la edad y el nivel de riesgo 
+          no es estadísticamente significativa al nivel del 5%.
+        """),
+        html.Li("""
+            **Coeficiente de Edad:** Por cada año adicional de edad, el nivel de riesgo aumenta en 0.0041 unidades, 
+          pero este cambio es muy pequeño y no significativo.
+        """),
+        html.Li("""
+            **Intercepto (const):** Cuando la edad es cero, el nivel de riesgo esperado es 1.9104, 
+          aunque este valor no tiene un significado práctico.
+        """),
+        html.Li(f"""
+            **Prueba de Normalidad de Shapiro-Wilk:** p-valor: {shapiro_test.pvalue:.4f}. Un p-valor bajo sugiere que los residuos no son normales.
+        """),
+    ]),
+    
+    html.H3("Verificación de Supuestos"),
+    html.Div([
+        html.Img(src='data:image/png;base64,{}'.format(data_residuals_vs_fitted), style={'width': '45%', 'display': 'inline-block'}),
+        html.Img(src='data:image/png;base64,{}'.format(data_qq_plot), style={'width': '45%', 'display': 'inline-block'}),
+    ]),
+    html.Div([
+        html.P("Gráfico de Residuos vs. Valores Ajustados: Los residuos deben estar distribuidos aleatoriamente alrededor de la línea horizontal. La falta de homoscedasticidad y la presencia de patrones sugieren que el modelo puede no ser adecuado."),
+        html.P("Gráfico Q-Q de Residuos: Los puntos deben seguir la línea diagonal. Las desviaciones significativas indican que los residuos no son normales."),
+    ]),
+    
+    html.H4("Conclusiones"),
+    html.P("""
+        Validez del Modelo: La baja R² y la falta de significancia estadística sugieren que la edad no es un buen 
+        predictor del nivel de riesgo de cáncer en este conjunto de datos.
+    """),
+    html.P("""
+        La falta de homoscedasticidad y normalidad en los residuos sugiere que el modelo de regresión lineal puede no ser adecuado. 
+        Considerar transformaciones de variables o modelos alternativos podría mejorar el ajuste.
+    """),
 ])

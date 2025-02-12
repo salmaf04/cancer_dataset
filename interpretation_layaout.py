@@ -79,64 +79,51 @@ interpretacion_graficos_caja = html.Div([
     """),
     
     html.H3("Factores Ambientales"),
-    html.Ul([
-        html.Li("""
-            La mediana de `Contaminación del Aire`, `Riesgos Laborales` y `Fumador Pasivo` está alrededor de 5, 
-            indicando niveles moderados de exposición. La variabilidad es similar, sugiriendo que la mayoría de los pacientes 
-            experimentan niveles de exposición entre 3 y 7.
-        """),
-        html.Li("""
-            Los valores atípicos en `Contaminación del Aire` y `Fumador Pasivo` indican exposiciones significativamente diferentes 
-            en algunos pacientes, lo que podría ser relevante para estudios más detallados.
-        """)
-    ]),
-    
-    html.H3("Factores de Estilo de Vida"),
-    html.Ul([
-        html.Li("""
-            La mediana de `Consumo de Alcohol`, `Tabaquismo`, `Dieta Equilibrada` y `Obesidad` está alrededor de 5, 
-            indicando niveles moderados en estos hábitos de vida. La variabilidad es similar, con rangos intercuartílicos 
-            que sugieren hábitos de vida entre 3 y 7.
-        """),
-        html.Li("""
-            Los valores atípicos en `Tabaquismo` y `Obesidad` indican hábitos significativamente diferentes en algunos pacientes, 
-            lo que podría ser relevante para estudios más detallados.
-        """)
-    ]),
-    
-    html.H3("Factores Clínicos"),
-    html.Ul([
-        html.Li("""
-            La mediana de síntomas como `Dolor en el Pecho`, `Tos con Sangre`, y `Dificultad para Respirar` está alrededor de 5, 
-            indicando una presencia moderada de estos síntomas en los pacientes.
-        """),
-        html.Li("""
-            La variabilidad es notable en síntomas como `Fatiga` y `Pérdida de Peso`, sugiriendo que estos síntomas varían 
-            significativamente entre los pacientes.
-        """),
-        html.Li("""
-            Los valores atípicos en varios síntomas indican que algunos pacientes experimentan niveles significativamente diferentes, 
-            lo que podría ser relevante para estudios más detallados.
-        """)
-    ]),
-    
-    html.H3("Factores Genéticos"),
-    html.Ul([
-        html.Li("""
-            La mediana de `Riesgo Genético` y `Enfermedad Pulmonar Crónica` está alrededor de 5, indicando un nivel moderado de riesgo 
-            genético y presencia de enfermedad.
-        """),
-        html.Li("""
-            La variabilidad en `Enfermedad Pulmonar Crónica` sugiere que algunos pacientes tienen una mayor predisposición, 
-            lo que podría ser relevante para estudios genéticos más detallados.
-        """)
-    ]),
     
     html.P("""
-        Este análisis visual complementa el resumen estadístico y nos ayuda a identificar patrones de exposición, hábitos de vida, 
-        síntomas y predisposiciones genéticas que podrían ser relevantes para la investigación y la planificación de intervenciones 
-        de salud pública.
-    """)
+        En la distribución de factores ambientales, observamos que la contaminación del aire tiene una caja que se 
+        extiende de 2 a 6, con una mediana en 3. Esto indica que la mayoría de los valores se encuentran en este rango,
+        con un sesgo hacia valores más bajos, ya que la mediana está más cerca del límite inferior. Los bigotes se 
+        extienden desde 1 hasta 8, sugiriendo que hay algunos valores extremos en ambos extremos. Para riesgos 
+        laborales, la caja va de 3 a 7 con una mediana de 5, lo que sugiere una distribución más centrada y simétrica 
+        en comparación con la contaminación del aire. Los bigotes también van de 1 a 8, indicando la presencia de 
+        valores extremos. En el caso de fumador pasivo, la caja se extiende de 2 a 7 con una mediana de 4, mostrando 
+        una distribución ligeramente sesgada hacia valores más bajos, con bigotes que van de 1 a 8, lo que indica 
+        variabilidad en los datos.
+    """),
+
+    
+    html.H3("Factores de Estilo de Vida"),
+    html.P("""
+        Para los factores de estilo de vida, el consumo de alcohol muestra una caja de 2 a 7 con una mediana de 5, 
+        lo que sugiere una distribución centrada con valores extremos en ambos lados, ya que los bigotes van de 1 a 8. 
+        En tabaquismo, la caja también va de 2 a 7, pero la mediana es 3, indicando una tendencia hacia valores más bajos.
+        Los bigotes de 1 a 8 sugieren variabilidad. La dieta equilibrada tiene una caja de 2 a 7, con una mediana de 4, y
+        bigotes de 1 a 7, lo que indica una distribución más uniforme sin valores extremos superiores. En obesidad, la 
+        caja va de 3 a 7 con una mediana de 4, y bigotes de 1 a 7, sugiriendo una distribución más centrada y simétrica.
+    """),
+    
+    html.H3("Factores Clínicos"),
+    html.P("""
+        En la distribución de factores clínicos, el dolor de pecho tiene una caja de 2 a 7 con una mediana de 4, y 
+        bigotes de 1 a 9, indicando una amplia variabilidad y algunos valores extremos. La tos con sangre muestra una 
+        caja de 3 a 7 con una mediana de 4, y bigotes de 1 a 9, sugiriendo una distribución similar. Fatiga tiene una 
+        caja más estrecha de 2 a 5, con una mediana de 3, y bigotes de 1 a 9, lo que indica una concentración de valores 
+        en el rango inferior. La pérdida de peso tiene una caja de 2 a 6, con una mediana de 3, y bigotes de 1 a 8, 
+        sugiriendo una distribución sesgada hacia valores más bajos. Dificultad para respirar y sibilancias tienen 
+        cajas de 2 a 6 y 2 a 5 respectivamente, ambas con medianas de 4, y bigotes que indican variabilidad. Dificultad 
+        para tragar y resfriados frecuentes muestran cajas de 2 a 5, con medianas de 4 y 3 respectivamente, y bigotes que
+        sugieren una distribución más concentrada. Finalmente, tos seca tiene una caja de 2 a 6, con una mediana de 4, y 
+        bigotes de 1 a 7, indicando una distribución más uniforme.
+    """),
+    
+    html.H3("Factores Genéticos"),
+    html.P("""
+        En la distribución de factores genéticos, el riesgo genético tiene una caja de 2 a 7, con una mediana de 5, y un 
+        bigote inferior que llega a 1, lo que sugiere una distribución centrada con algunos valores extremos inferiores. 
+        La enfermedad pulmonar crónica muestra una caja de 3 a 6, con una mediana de 4, y bigotes de 1 a 7, indicando una
+        distribución más centrada y simétrica con menos variabilidad en comparación con el riesgo genético.
+    """),
 ])
 
 # Interpretación de la matriz de correlación
